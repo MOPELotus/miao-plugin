@@ -79,11 +79,10 @@ let DmgAttr = {
         ret.lunarBloom = 0 // 月绽放
         ret.lunarCrystallize = 0 // 月结晶
         ret.stellarConduct = 0 // 星超导
+        ret.stellarSwirl = 0 // 星扩散
         ret.fykx = 0 // 敌人反应抗性降低
-        ret.fyinc = 0 // 反应伤害值提升（百分比/不受精通加成）
         ret.fyplus = 0 // 反应伤害值提升（数值/不受精通加成）
         ret.fypct = 0 // 反应基础伤害值提升（百分比/受精通加成）
-        ret.fybase = 0 // 反应基础伤害值提升（数值/受精通加成）
       } else if (game === 'sr') {
         ret.sp = (char.sp || 0) * 1
         ret.superBreak = {
@@ -155,7 +154,7 @@ let DmgAttr = {
         if (mKey[key]) {
           buff.data['_' + key] = DmgMastery.getMultiple(key, mastery) * 100
         } else if (mKey2[key]) {
-          let eleNum = DmgMastery.getBasePct(key, attr.element)
+          let eleNum = DmgMastery.getBasePct(key, attr.element, talent)
           let eleBase = 1 + (attr[key] || 0) / 100 + DmgMastery.getMultiple(key, mastery)
           eleBase *= eleBaseDmg[ds.level]
           buff.data['_' + key] = DmgMastery.getMultiple(key, mastery) * 100
@@ -206,16 +205,16 @@ let DmgAttr = {
           attr.enemy.ignore += val * 1 || 0
           return
         }
-        
+
         if ([
           'vaporize', 'melt', 'crystallize', 'burning',
           'superConduct', 'swirl', 'electroCharged', 'shatter',
           'overloaded', 'bloom', 'burgeon', 'hyperBloom',
           'aggravate', 'spread', 'elevated',
           'lunarCharged', 'lunarBloom', 'lunarCrystallize',
-          'stellarConduct',
+          'stellarConduct', 'stellarSwirl',
           'kx', 'fykx', 'multi', 'fyplus', 'fypct',
-          'fybase', 'fyinc', 'merrymakes', 'punchline'
+          'merrymakes', 'punchline'
         ].includes(key)) {
           attr[key] += val * 1 || 0
           return
