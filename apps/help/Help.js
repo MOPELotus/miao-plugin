@@ -56,7 +56,7 @@ const Help = {
 
     // 新增text功能，发送帮助链接或简单文本
     async text(e) {
-        const helpText = '点击查看机器人帮助：\nhttps://lotusshared.cn/2025/01/23/yunzaihelp/';
+        const helpText = '点击查看机器人帮助：\nhttps://www.lotusshared.cn/yunzai/';
         e.reply(helpText);  // 发送文本帮助链接
     },
 
