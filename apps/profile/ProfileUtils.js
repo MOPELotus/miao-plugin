@@ -52,7 +52,12 @@ export async function getOriginalPicture (e) {
       }
 
       if (imgPath && imgPath.img) {
-        e.reply(segment.image(`file://${miaoPath}/resources/${decodeURIComponent(imgPath.img)}`), false, { recallMsg: 120 })
+        let img = imgPath.img
+        // 自定义图库源可能返回file://绝对地址（跨盘等），其余按resources相对路径处理
+        let url = /^file:\/\//i.test(img)
+          ? `file://${decodeURIComponent(img.replace(/^file:\/+/i, ''))}`
+          : `file://${miaoPath}/resources/${decodeURIComponent(img)}`
+        e.reply(segment.image(url), false, { recallMsg: 120 })
         e.reply('机器人维护不易，服务器成本较高，原图等功能对服务器资源消耗大，捐赠以获取更好的体验以及支持机器人继续维护运行。如您有意赞助请联系荷花（1102305070）或加入荷花的小群以了解更多。', false,)
         return true
       }

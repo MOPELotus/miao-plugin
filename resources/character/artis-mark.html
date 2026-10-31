@@ -14,7 +14,7 @@
 {{set ad = artisDetail}}
 <div class="profile-cont game-{{game}}">
   <div class="basic">
-    <div class="main-pic" style="background-image:url({{_res_path}}{{splash||imgs?.splash}})"></div>
+    <div class="main-pic" style="background-image:url({{_imgUrl(splash||imgs?.splash)}})"></div>
     <div class="detail">
       <div class="char-name">{{data.name}}</div>
       <div class="char-lv">UID {{uid}} - Lv.{{data.level}}
@@ -73,7 +73,7 @@
           <li>
             <span class="title">总分对齐</span>
             <span class="val">
-              *{{( 66 / (46.6/6/100 * charCfg.posMaxMark[idx]) * 100).toFixed(1)}}%
+              *{{( 66 / (46.6/6/100 * (ds.pMax || charCfg.posMaxMark[idx])) * 100).toFixed(1)}}%
             </span>
           </li>
           {{if idx>2 || game==='sr' }}
