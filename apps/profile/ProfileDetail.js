@@ -3,13 +3,12 @@ import { getTargetUid, getProfileRefresh } from './ProfileCommon.js'
 import ProfileList from './ProfileList.js'
 import { Cfg, Common, Data, Format } from '#miao'
 import { Button, MysApi, ProfileRank, Character, Weapon, Artifact } from '#miao.models'
-
 import ProfileChange from './ProfileChange.js'
 import { profileArtis } from './ProfileArtis.js'
 import { ProfileWeapon } from './ProfileWeapon.js'
 
 let { diyCfg } = await Data.importCfg('profile')
-
+let profile = false
 // 查看当前角色
 let ProfileDetail = {
   async detail (e) {
@@ -24,7 +23,6 @@ let ProfileDetail = {
     let profileChange = false
     let changeMsg = msg
     let pc = ProfileChange.matchMsg(msg)
-
     if (pc && pc.char && pc.change) {
       if (!Cfg.get('profileChange')) {
         e.reply('面板替换功能已禁用...')
