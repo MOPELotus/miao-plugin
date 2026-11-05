@@ -100,11 +100,11 @@ let Gacha = {
   },
   async stat (e) {
     let msg = e.msg.replace(/#|喵喵|统计|分析|池/g, '')
+    let game = /星铁/.test(msg) ? 'sr' : 'gs'
+    msg = msg.replace(/星铁/, '')
     // #角色全部统计：显示全部卡池，超出数量限制时分页并合并转发；#全部统计 仍为全部卡池汇总
     let isAll = /全部/.test(msg) && msg !== '全部'
     msg = isAll ? msg.replace(/全部/g, '') : msg
-    let game = /星铁/.test(msg) ? 'sr' : 'gs'
-    msg = msg.replace(/星铁/, '')
     let type = 'up'
     if (/武器|光锥/.test(msg)) {
       type = 'weapon'
