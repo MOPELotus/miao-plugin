@@ -126,6 +126,8 @@ let GachaData = {
       items.push({
         id,
         logId: ds.id,
+        // 官方聚合记录携带逐条 UP 标记；旧格式没有时继续按卡池匹配。
+        isUp: typeof ds.is_up === 'boolean' ? ds.is_up : undefined,
         time: new Date(ds.time)
       })
     })
@@ -194,21 +196,8 @@ let GachaData = {
           noFiveNum = fiveLogNum
         }
         fiveLogNum = 0
-        let isUp = false
-        // 歪了多少个
-        if (type === 'char') {
-          if (currVersion.char5?.includes(ds.name)) {
-            isUp = true
-          } else {
-            wai++
-          }
-        } else {
-          if (currVersion.weapon5?.includes(ds.name)) {
-            isUp = true
-          } else {
-            wai++
-          }
-        }
+        let isUp = item.isUp ?? Boolean((type === 'char' ? currVersion.char5 : currVersion.weapon5)?.includes(ds.name))
+        if (!isUp) wai++
 
         fiveLog.push({
           id: item.id,
@@ -443,16 +432,11 @@ let GachaData = {
           to: hasVersion ? moment(new Date(cv.to)).format('YY-MM-DD') : '',
           upIds: {}
         }
-        let upName = {}
         let items = []
         let poolNames = []
         lodash.forEach(cv.char5, (name) => {
-          upName[name] = true
           let char = Character.get(name)
           poolNames.push(char.abbr)
-        })
-        lodash.forEach(cv.weapon5, (name) => {
-          upName[name] = true
         })
         let w5Num = 0
         let w5UpNum = 0
@@ -463,7 +447,8 @@ let GachaData = {
         let w3Num = 0
         lodash.forEach(cv.items, (num, id) => {
           let item = itemMap[id]
-          let isUp = upName[item.name]
+          let upNum = cv.upItems[id] || 0
+          let isUp = upNum > 0
           let star = item.star
           if (isUp) {
             temp.upIds[id] = item.name
@@ -472,7 +457,7 @@ let GachaData = {
           if (item.type === 'char') {
             if (star === 5) {
               c5Num += num
-              isUp && (c5UpNum += num)
+              c5UpNum += upNum
             } else {
               c4Num += num
             }
@@ -480,7 +465,7 @@ let GachaData = {
           if (item.type === 'weapon') {
             if (star === 5) {
               w5Num += num
-              isUp && (w5UpNum += num)
+              w5UpNum += upNum
             } else {
               star === 4 ? (w4Num += num) : (w3Num += num)
             }
@@ -519,7 +504,8 @@ let GachaData = {
         }
         currVersion = {
           ...v,
-          items: {}
+          items: {},
+          upItems: {}
         }
       }
       if (!currVersion.items[ds.id]) {
@@ -527,6 +513,9 @@ let GachaData = {
       } else {
         currVersion.items[ds.id]++
       }
+      let item = itemMap[ds.id]
+      let isUp = ds.isUp ?? Boolean((item.type === 'char' ? currVersion.char5 : currVersion.weapon5)?.includes(item.name))
+      if (isUp) currVersion.upItems[ds.id] = (currVersion.upItems[ds.id] || 0) + 1
     })
     versionData.push(getCurr())
 
