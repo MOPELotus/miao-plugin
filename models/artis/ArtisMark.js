@@ -113,7 +113,7 @@ let ArtisMark = {
     let fixPct = 1
     idx = idx * 1
     let pMax = posMaxMark[idx]
-    if (idx >= 3) {
+    if (idx >= 3 && !charCfg.ignoreMain?.includes(idx)) {
       let mainKey = ArtisMark.getMainKey(idx, key, elem, game, id)
       if (key !== 'recharge') {
         let mMax = posMaxMark['m' + idx]
@@ -154,7 +154,7 @@ let ArtisMark = {
   // 若主词条为其它属性，该属性可作为副词条，实际裸分上限高于 posMaxMark，直接归一化会导致得分超出上限
   getPosMaxMark (charCfg, idx, mainKey, game = 'gs') {
     let pMax = charCfg.posMaxMark[idx]
-    if (idx < 3) {
+    if (idx < 3 || charCfg.ignoreMain?.includes(Number(idx))) {
       return pMax
     }
     return Math.max(pMax, ArtisMark.getMainMaxMark(charCfg.attrs, mainKey, game))
@@ -173,7 +173,7 @@ let ArtisMark = {
   },
 
   // 获取位置最高分
-  getMaxMark (attrs, game = 'gs') {
+  getMaxMark (attrs, game = 'gs', ignoreMain = []) {
     let ret = {}
     let { mainAttr, subAttr } = Meta.getMeta(game, 'arti')
     for (let idx = 1; idx <= (game === 'gs' ? 5 : 6); idx++) {
@@ -184,7 +184,7 @@ let ArtisMark = {
         mAttr = 'hpPlus'
       } else if (idx === 2) {
         mAttr = 'atkPlus'
-      } else if (idx >= 3) {
+      } else if (idx >= 3 && !ignoreMain.includes(idx)) {
         let mainCandidates = ArtisMark.getMaxAttr(attrs, mainAttr[idx])
         if (mainCandidates.length > 0) {
           mAttr = mainCandidates[0]
@@ -240,10 +240,13 @@ let ArtisMark = {
       }
       if (withDetail) {
         let artifact = Artifact.get(arti, game)
+        let ignoreMain = charCfg.ignoreMain?.includes(Number(idx))
+        let main = ArtisMark.formatArti(arti.main, ignoreMain ? false : charCfg.attrs, true, game)
         artisRet[idx] = {
           ...artifact.getData('name,abbr,set:setName,img'),
           level: arti.level,
-          main: ArtisMark.formatArti(arti.main, charCfg.attrs, true, game),
+          main,
+          ignoreMain,
           attrs: ArtisMark.formatArtiAttrs(arti.attrs, charCfg.attrs, game),
           pMax: ArtisMark.getPosMaxMark(charCfg, idx, ArtisMark.getMainKey(idx, arti.main?.key, elem, game, id), game),
           ...artisRet[idx]

@@ -52,7 +52,9 @@
           <li class="arti-main">
             <span class="title">{{artisKeyTitle[ds.main.key]}}</span>
             <span class="val">+{{ds.main.value}}</span>
-            {{if idx >1 }}
+            {{if ds.ignoreMain}}
+            <span class="val">不计分</span>
+            {{else if idx >1 }}
             <span class="mark">{{ mark( ds.main.mark / 6 ) }}</span>
             {{else}}
             <span class="val"> - </span>
@@ -80,7 +82,7 @@
           <li>
             <span class="title">最优主词缀</span>
             <span class="val">
-              {{if game==='sr' && idx<=2 }} - 
+              {{if ds.ignoreMain || (game==='sr' && idx<=2) }} -
               {{else}} 
                 {{if ds.main.title==='充能效率' }} *100% 
                 {{else}} 

@@ -130,12 +130,15 @@ const ArtisMarkCfg = {
       }
       attrs[key] = ret
     })
-    let posMaxMark = ArtisMark.getMaxMark(attrs, game)
+    // 星神★阿哈的位面球、连结绳只按副词条评分。
+    const ignoreMain = game === 'sr' && Number(char.id) === 1511 ? [5, 6] : []
+    let posMaxMark = ArtisMark.getMaxMark(attrs, game, ignoreMain)
     // 返回内容待梳理简化
     return {
       attrs,
       classTitle: title,
-      posMaxMark
+      posMaxMark,
+      ignoreMain
     }
   }
 }
