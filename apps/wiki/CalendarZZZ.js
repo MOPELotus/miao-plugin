@@ -158,16 +158,15 @@ let CalZZZ = {
           } else if (/预下载/.test(content)) {
             //logger.info(`${annId},${title}检测到 预下载`)
             timeRet = /([0-9\\/\\: ~]){9,}/.exec(content)
+            if (!timeRet) return
             annTime = timeRet[0].split('~')
+            if (annTime.length !== 2) return
             annTime[0]=moment(annTime[0]).subtract(5, 'days').format('YYYY-MM-DD HH:mm:ss')
-          } else if (/调频/.test(content)) {
-            //logger.info(`${annId},${title}检测到 调频`)
-            timeRet = /(?:活动时间限定)(?:.*?)((?:[0-9\\/\\: ~]){9,})/.exec(content)
-            annTime = timeRet[1].split('~')
-          } else if (/卓越搭档/.test(content)) {
-            //logger.info(`${annId},${title}检测到 卓越搭档`)
-            timeRet = /(?:活动时间限定)(?:.*?)((?:[0-9\\/\\: ~]){9,})/.exec(content)
-            annTime = timeRet[1].split('~')
+          } else if (/调频|卓越搭档/.test(content)) {
+            // 当前公告使用“活动时间为：”，旧公告使用“活动时间限定…”。
+            const range = /活动时间(?:为[：:]?|限定[^0-9]*|[：:])?\s*(\d{4}[/-]\d{1,2}[/-]\d{1,2} +\d{1,2}:\d{2}(?::\d{2})?)\s*[~～至]\s*(\d{4}[/-]\d{1,2}[/-]\d{1,2} +\d{1,2}:\d{2}(?::\d{2})?)/.exec(content)
+            if (range) annTime = range.slice(1)
+            else if (timeRet) annTime = timeRet[1].split('~')
           } else if (timeRet && timeRet[1]) {
             //logger.info(`${annId},${title}检测到 活动时间`)
             //logger.info(`${timeRet[1]}`)
